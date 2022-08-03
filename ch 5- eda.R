@@ -339,6 +339,3 @@ ggplot(data = diamonds2) +
 
 ggplot(data = diamonds2) +
   geom_boxplot(mapping = aes(x = cut, y = resid))
-
-
-
