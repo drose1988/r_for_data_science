@@ -328,7 +328,6 @@ ggplot(data = smaller, mapping = aes(x = carat, y = price)) +
 
 library(modelr)
 
-
 mod <- lm(log(price) ~ log(carat), data = diamonds)
 
 diamonds2 <- diamonds %>%
