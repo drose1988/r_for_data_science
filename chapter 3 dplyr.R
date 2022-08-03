@@ -1,5 +1,5 @@
-##############################################################################################################################
-##############################################################################################################################
+##########################################################################################################################################################
+##########################################################################################################################################################
 
 library(nycflights13)
 library(tidyverse)
@@ -7,7 +7,7 @@ library(tidyverse)
 ?flights
 View(flights)
 
-##############################################################################################################################
+##########################################################################################################################################################
 
 # tibbles are data frames but slightly tweaked to work better with tidyverse
 
@@ -19,7 +19,7 @@ View(flights)
 # fctr -> factors, represents categorical variables with fixed possible values
 # date -> date
 
-#### dplyr basics ############################################################################################################
+#### dplyr basics ########################################################################################################################################
 
 # filter, arrange, select, mutate, summarize, group_by(works in conjunction with the other)
 # those 6 verbs are the basis of data manipulation
@@ -27,7 +27,7 @@ View(flights)
 filter(flights, month == 1 , day == 1)
 dec25 <- filter (flights, month == 12 , day == 1)
 
-#### comparisons #############################################################################################################
+#### comparisons #########################################################################################################################################
 
 # near() is alternative to == to use, computers hold finite precision on arithmatic
 
@@ -37,7 +37,7 @@ sqrt(2)^2 == 2
 near(sqrt(2) ^ 2 , 2)
 near(1/49 * 49 , 1)
 
-#### logical operators  ######################################################################################################
+#### logical operators  #################################################################################################################################
 
 # y & !x
 # x & x
@@ -66,7 +66,7 @@ df <- tibble (x = c(1, NA, 3))
 filter(df, x > 1)
 filter(df, is.na(x) | x > 1)
 
-#### excersises ##############################################################################################################
+#### excersises #########################################################################################################################################
 
 # Find all flights that:
 
@@ -101,7 +101,9 @@ filter(flights, between(month,7,9))
 # How many flights have a missing dep_time? What other variables are missing? What might these rows represent?
 filter(flights, is.na(dep_time)) # all the time and delay variables except the scheduled times, incomplete input of the data
 
-# Why is NA ^ 0 not missing? Why is NA | True not missing? Why is False & NA not missing? Can you figure out the general rule? (NA * 0 is a tricky counterexample)
+# Why is NA ^ 0 not missing? Why is NA | True not missing? Why is False & NA not missing? Can you figure out the general rule? 
+# (NA * 0 is a tricky counterexample)
+
 NA ^ 0        # general rule that anything to the power of 0 will be 1
 NA | TRUE     # anything TRUE is TRUE, if the missing values were FALSE then the statement would still be TRUE
 NA | FALSE    # NA could be TRUE or FALSE so the logic can't determine the statement to be TRUE or FALSE
