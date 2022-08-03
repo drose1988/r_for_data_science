@@ -37,7 +37,7 @@ sqrt(2)^2 == 2
 near(sqrt(2) ^ 2 , 2)
 near(1/49 * 49 , 1)
 
-#### logical operators  #################################################################################################################################
+#### logical operators  ##################################################################################################################################
 
 # y & !x
 # x & x
@@ -66,7 +66,7 @@ df <- tibble (x = c(1, NA, 3))
 filter(df, x > 1)
 filter(df, is.na(x) | x > 1)
 
-#### excersises #########################################################################################################################################
+#### exercises ##########################################################################################################################################
 
 # Find all flights that:
 
@@ -111,7 +111,7 @@ TRUE & FALSE
 NA & FALSE    # NA could be TRUE or FALSE, either way TRUE & FALSE == FALSE 
 NA * 0        # 0 * ∞ and 0 * -∞ are undefined values, so NA could possibly be infinity
 
-#### arrange #################################################################################################################
+#### arrange #############################################################################################################################################
 
 arrange(flights, year, month, day)
 
@@ -136,7 +136,7 @@ arrange(flights, air_time)
 arrange(flights, desc(distance))
 arrange(flights, distance)
 
-#### select  #################################################################################################################
+#### select  #############################################################################################################################################
 
 select(flights, year, month, day)
 select(flights, year:day)
@@ -158,14 +158,14 @@ select(flights, one_of(vars))     # if you create a vector with matching column 
 select(flights, all_of(vars)) 
 select(flights, any_of(vars)) 
 
-# Does the result of running this following code surprise you? How do the select helpers deal with case by default? How can you change the default? select(flights, contains("TIME"))
+# Does the result of running this following code surprise you? How do the select helpers deal with case by default? How can you change the default? 
 select(flights, contains("TIME"))     # for some reason the contains function ignores the case, probably to return more making it easier to find columns
 
-#### mutate ##################################################################################################################
+#### mutate ##############################################################################################################################################
 
 flights_sml <- select(flights, year:day, ends_with("delay"), distance, air_time)
 
-mutate(flights_sml, gain = arr_delay - dep_delay, speed = distance / air_time * 60)   # however you're not creating an object so this won't save your new columns
+mutate(flights_sml, gain = arr_delay - dep_delay, speed = distance / air_time * 60)   # you're not creating an object so this won't save your new columns
 
 # transmute mutates the table but only return the columns you've created
 transmute(flights_sml, gain = arr_delay - dep_delay, speed = distance / air_time * 60)
@@ -206,7 +206,7 @@ percent_rank(y)
 dense_rank(y)
 cume_dist(y)
 
-#### excersises ##############################################################################################################
+#### exercises ##########################################################################################################################################
 
 # Currently dep_time and sched_dep_time are convenient to look at, but hard to compute with because they’re not really continuous numbers. 
 # Convert them to a more convenient representation of number of minutes since midnight.
@@ -232,7 +232,7 @@ air_flights <- mutate(flights, air_time2 = arr_time - dep_time)
 
 select(air_flights, air_time, air_time2)
 
-#### grouped summaries #######################################################################################################
+#### grouped summaries ###################################################################################################################################
 
 # summarize collapses the data frame into a single row
 # most useful paired with group_by
@@ -266,7 +266,7 @@ delays <- flights %>%
   summarize(count = n(), dist = mean(distance, na.rm = TRUE), delay = mean(arr_delay, na.rm = TRUE)) %>%
   filter(count > 20, dest != "HNL")
 
-#### missing values ##########################################################################################################
+#### missing values ######################################################################################################################################
 
 # na.rm -> remove NA, defaults to FALSE so specify TRUE so NA doesn't impact your aggregations
 View(delay)
@@ -287,7 +287,7 @@ not_cancelled %>%
   group_by(year, month, day) %>%
   summarise(mean = mean(dep_delay))
 
-#### counts  #################################################################################################################
+#### counts  #############################################################################################################################################
 
 # when doing aggregation do a count of values and a count of nonmissing values
 # count(n()) , sum(!is.na())
@@ -315,7 +315,7 @@ delays %>%
   ggplot(mapping = aes(x = n, y = delay)) +
   geom_point(alpha = 1/10)
 
-##############################################################################################################################
+##########################################################################################################################################################
 
 # creates a tibble from the Batting table in Lahman package
 batting <- as_tibble(Lahman::Batting)
@@ -335,7 +335,7 @@ batters %>%
   geom_point() +
   geom_smooth(se = FALSE)
 
-#### useful summary functions ################################################################################################
+#### useful summary functions ############################################################################################################################
 
 # meaures of location -> here we are combining aggregation with logical subsetting seen in the brackets
 # we can see the difference in avg_delay values because we've filtered out arr_delay less than zero in the second one
@@ -372,7 +372,7 @@ what_is_this <- not_cancelled %>%
   mutate(r = min_rank(desc(dep_time))) %>%
   filter(r %in% range(r))
 
-#### count ###################################################################################################################
+#### count ###############################################################################################################################################
 
 # n() takes no argument to get the size of the current group
 # n_distinct(x) counts distinct values
@@ -390,7 +390,7 @@ not_cancelled %>%
 not_cancelled %>%
   count(tailnum, wt = distance)
 
-#### counts and proportions of logical values  ###############################################################################
+#### counts and proportions of logical values  ###########################################################################################################
 # ex sum(x > 10) or mean(y == 0)
 # when using counts with numeric functions, TRUE converts to 1 and FALSE converts to 0
 # so sum(x) gives the number of TRUEs in x
@@ -407,7 +407,7 @@ not_cancelled %>%
   group_by(year, month, day) %>%
   summarise(hour_perc = mean(arr_delay > 60))
 
-#### grouping with multi variables ###########################################################################################
+#### grouping with multi variables #######################################################################################################################
 
 # grouping multiple variables, each summary peels off one level of grouping
 
@@ -426,7 +426,7 @@ daily %>%
   ungroup() %>%
   summarise(flights = n())
 
-#### excersises ##############################################################################################################
+#### exercises# ##########################################################################################################################################
 
 # Brainstorm at least 5 different ways to assess the typical delay characteristics of a group of flights. Consider the following scenarios:
 
@@ -440,7 +440,8 @@ daily %>%
 # look at the summary statistics for arr_delay and dep_delay, graph the distribution of delay time, 
 # convert the dep_delay and arr_delay to z-scores and figure out which values are 2 standard deviations away from the median
 
-# Come up with another approach that will give you the same output as not_cancelled %>% count(dest) and not_cancelled %>% count(tailnum, wt = distance) (without using count()).
+# Come up with another approach that will give you the same output as 
+# not_cancelled %>% count(dest) and not_cancelled %>% count(tailnum, wt = distance) (without using count()).
 
 not_cancelled %>%
   group_by(dest) %>%
@@ -453,7 +454,8 @@ not_cancelled %>%
 
 # Our definition of cancelled flights (is.na(dep_delay) | is.na(arr_delay)) is slightly suboptimal. Why? Which is the most important column?
 
-# I would think a lack of delay information doesn't necessarily the flight was cancelled, no values for arrival time and departure time are more appropriate
+# I would think a lack of delay information doesn't necessarily the flight was cancelled, 
+# no values for arrival time and departure time are more appropriate
 
 not_cancelled_wrong <- flights %>%
   filter(!is.na(dep_delay) | !is.na(arr_delay))
@@ -510,7 +512,7 @@ flights %>%
   group_by(tailnum) %>%
   count(sort = TRUE)
 
-#### grouped mutates (and filters) ###########################################################################################
+#### grouped mutates (and filters) #######################################################################################################################
 
 # grouping is most common with summarise, but it can be used with mutate and filter as well
 
@@ -519,7 +521,8 @@ flights_sml %>%
   group_by(year, month, day) %>%
   filter(rank(desc(arr_delay)) <= 5)
 
-# this doesn't create a squashed dataset grouped by dest, it filters the dataset to only show flights to destinations that had more than 365 trips that year
+# this doesn't create a squashed dataset grouped by dest, 
+# it filters the dataset to only show flights to destinations that had more than 365 trips that year
 popular_dest <- flights %>%
   group_by(dest) %>%
   filter(n() > 365)
@@ -529,7 +532,8 @@ flights %>%
   group_by(dest) %>%
   filter(n() <= 365)
 
-# filter out arrival delays less than 0, the prop_delay percent values are actually the proportion of delay times over total delay times for each destination
+# filter out arrival delays less than 0, 
+# the prop_delay percent values are actually the proportion of delay times over total delay times for each destination
 # since you grouped by the dest when making the object, the group by holds
 popular_dest %>%
   filter(arr_delay > 0) %>%
@@ -537,7 +541,7 @@ popular_dest %>%
   select(year:day, dest, arr_delay, prop_delay) %>%
   arrange(desc(prop_delay))
 
-#### excersises ##############################################################################################################
+#### exercises ###########################################################################################################################################
 
 # 1. Refer back to the table of useful mutate and filtering functions. Describe how each operation changes when you combine it with grouping.
 
