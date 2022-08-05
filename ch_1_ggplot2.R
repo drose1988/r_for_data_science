@@ -279,7 +279,7 @@ ggplot(data = mpg) +
 # The max number of colors to use when encoding unordered categorical (qualitative) data is nine, and in practice, often much less than that. 
 # Displaying observations from different categories on different scales makes it difficult to directly compare values of observations across categories. 
 # However, it can make it easier to compare the shape of the relationship between the x and y variables across categories.
-# 
+
 # Disadvantages of encoding the class variable with facets instead of the color aesthetic 
 # include the difficulty of comparing the values of observations between categories since the observations for each category are on different plots. 
 # Using the same x- and y-scales for all facets makes it easier to compare values of observations across categories, 
@@ -432,6 +432,8 @@ ggplot() +
         # they'll look the same because you're mapping the same aesthetics
         # the only difference is mapping them in geom or in ggplot
 
+##########################################################################################################################################################
+
 # 6. recreate the r code for these graphs
 
 ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
@@ -453,7 +455,6 @@ ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
 ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
   geom_point(size = 5, mapping = aes(color = drv)) +
   geom_smooth(se = FALSE, size = 2, mapping = aes(linetype = drv))
-
 
 ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
   geom_point(size = 5, mapping = aes(color = drv))
@@ -644,7 +645,6 @@ ggplot(data = diamonds) +
         # without group = 1, assumes all groups have equal size x, 
         # the count for proportion will be within group rather than between group
 
-
 ##### position adjustments ###############################################################################################################################
 
 # you can color in a bar chart by specifying the fill aesthetic, which is more useful that the color aesthetic.
@@ -763,6 +763,8 @@ ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) +
 
 ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) +
   geom_jitter()
+  
+##########################################################################################################################################################
 
 # 3. compare and contrast geom_jitter and geom_count
 
@@ -773,6 +775,8 @@ ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) +
         # jitter displaces the position of the values though
         # if you add a third variable to geom_count you may covering some values
         # but if you combine jitter and count geoms it can help
+
+##########################################################################################################################################################
 
 # 4. what's the default position adjustment for geom_boxplot()? create a viz of the mpg dataset to demonstrate.
 
@@ -785,7 +789,6 @@ ggplot(data = mpg, mapping = aes(x = cty, y = hwy, group = class)) +
 
 ggplot(data = mpg, aes(x = drv, y = hwy, colour = class)) +
   geom_boxplot(position = "identity")
-
 
 ##### coordinate systems #################################################################################################################################
 
@@ -875,6 +878,8 @@ ggplot(mpg, aes(x = factor(1), fill = drv)) +
   geom_bar(width = 1) +
   coord_polar()
 
+##########################################################################################################################################################
+
 # 2. what does labs do?
 
         # in labs function they are used to make labels
@@ -888,12 +893,23 @@ ggplot(data = mpg, mapping = aes(x = class, y = hwy)) +
        title = "Highway MPG by car class",
        subtitle = "1999-2008",
        caption = "Source: http://fueleconomy.gov")
+       
+##########################################################################################################################################################
 
 # 3. what's the difference between coord_quickmap() and coord_map()
 
         # quickmap is quicker
         # they both map based on earth coordinates
         # but coord_map accounts for the curvature of the earth
+        
+# 4. what does the following plot tell you about the relationship between city and highway mpg?
+# why is coord_fixed important? what does geom_abline do?
 
+p <- ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) +
+  geom_point() +
+  geom_abline()
+p + coord_fixed()
 
-
+        # coord_fixed is important to make y-axis and x-axis uniform space intervals
+        # that way we can use our 45 degree line as an accurate reference point
+        
