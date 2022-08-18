@@ -167,8 +167,6 @@ gss_cat %>%
   mutate(marital = marital %>% fct_infreq() %>% fct_rev) %>%
   ggplot(aes(marital)) +
   geom_bar()
-
-
 ```
 
 #### Modifying Factor Order
