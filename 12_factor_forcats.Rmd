@@ -1,0 +1,231 @@
+---
+title: "12_factor_forcats"
+author: "Doug"
+date: '2022-08-18'
+output: html_document
+---
+
+## Chapter 12: Factors with forcats
+
+#### Introduction
+
+-   factors are used to work with categorical variables
+-   useful when you want to display character vectors in non alphabetical order
+-   forcat is not part of the core tidyverse, load it explicitly
+
+```{r}
+library(tidyverse)
+library(forcats)
+```
+
+#### Creating Factors
+
+-   sorting categorical variables doesn't really work
+
+```{r}
+x1 <- c("Dec","Apr","Jan","Mar")
+x2 <- c("Dec","Apr","Jam","Mar")
+sort(x1)
+```
+
+-   creating a list displaying all possible values or valid levels
+-   then create a factor, selecting values in x1 that correspond to month_levels
+-   if values don't correspond you'd get an NA
+-   using **parse_factor()** will show an error instead of NA
+
+```{r}
+month_levels <- c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
+y1 <- factor(x1, levels = month_levels)
+y2 <- factor(x2, levels = month_levels)
+```
+
+```{r}
+y2 <- parse_factor(x2, levels = month_levels)
+```
+
+-   use **unique()** for having your levels match the original data order
+
+```{r}
+f1 <- factor(x1, levels = unique(x1))
+f2 <- x1 %>% factor() %>% fct_inorder()
+```
+
+-   show list of levels with **levels()**
+
+```{r}
+levels(f2)
+```
+
+```{r}
+gsss_cat
+gss_cat %>% count(race)
+```
+
+```{r}
+ggplot(gss_cat, aes(race)) +
+  geom_bar()
+```
+
+-   levels that don't have values will automatically be dropped by ggplot2 but you can force them to be displayed
+
+```{r}
+ggplot(gss_cat, aes(race)) +
+  geom_bar() +
+  scale_x_discrete(drop = FALSE)
+```
+
+#### Modifying Factor Order
+
+```{r}
+relig <- gss_cat %>%
+group_by(relig) %>%
+summarize(
+  age = mean(age, no.rm = TRUE),
+  tvhours = mean(tvhours, na.rm = TRUE),
+  n = n())
+```
+
+```{r}
+ggplot(relig, aes(tvhours, relig))+
+  geom_point()
+```
+
+-   the plot is difficult to interpret without any order to the display of values
+-   **fct_reorder** will ask for a factor to modify levels, a numeric variable to reorder
+-   so use it instead of the y variable by itself
+
+```{r}
+ggplot(relig, aes(tvhours, fct_reorder(relig, tvhours))) +
+  geom_point()
+```
+
+-   **fct_reorder()** can be used outside of the aes, into a seperate mutate step
+
+```{r}
+relig %>%
+  mutate(relig = fct_reorder(relig, tvhours)) %>%
+  ggplot(aes(tvhours, relig)) +
+  geom_point()
+```
+
+-   the problem here is that the categories are ordinal, so rearranging the order based on the values in age is not a good idea
+-   so only use **fct_reorder()** with variables that are arbitrarily ordered
+
+```{r}
+rincome <- gss_cat %>%
+  group_by(rincome) %>%
+  summarize(
+    age = mean(age, na.rm = TRUE),
+    tvhours = mean(tvhours, na.rm = TRUE),
+    n = n())
+```
+
+```{r}
+ggplot(rincome, aes(age, fct_reorder(rincome, age))) +
+  geom_point()
+```
+
+-   however in these cases **fct_relevel()** can be used to bring some levels of a factor to the front of the display
+-   control the placement of it with *after =* and *before =*
+
+```{r}
+ggplot(rincome, aes(age, fct_relevel(rincome, "Not applicable", "Don't know"))) +
+  geom_point()
+```
+
+-   use **fct_reorder2()** to reorder the factor by the y values associated with the largest x values
+
+```{r}
+by_age <- gss_cat %>%
+  filter(!is.na(age)) %>%
+  group_by(age, marital) %>%
+  summarise(n = n()) %>%
+  mutate(prop = n / sum(n))
+```
+
+```{r}
+ggplot(by_age, aes(age, prop, color = marital)) +
+  geom_line(na.rm = TRUE)
+```
+
+```{r}
+ggplot(by_age, aes(age, prop, color = fct_reorder2(marital, age, prop))) +
+  geom_line() +
+  labs(color = "marital")
+```
+
+-   use **fct_infreq()** for bar charts reordering levels in increasing frequency
+-   often combined with **fct_rev()** to reverse the order
+
+```{r}
+gss_cat %>%
+  mutate(marital = marital %>% fct_infreq() %>% fct_rev()) %>%
+  ggplot(aes(marital)) +
+  geom_bar()
+
+gss_cat %>%
+  mutate(marital = marital %>% fct_infreq() %>% fct_rev) %>%
+  ggplot(aes(marital)) +
+  geom_bar()
+
+
+```
+
+#### Modifying Factor Order
+
+-   use **fct_recode()** to recode the values of each level, so you can combine multiple levels into one level
+-   be careful using this as it could bring misleading results if categories are actually different
+
+```{r}
+gss_cat %>% count(partyid)
+
+gss_cat %>%
+  mutate(partyid = fct_recode(partyid,
+                              "Republican, strong" = "Strong republican",
+                              "Republican, weak" = "Not str republican",
+                              "Independent, near rep" = "Ind,near rep",
+                              "Independent, near dem" = "Ind,near dem",
+                              "Democrat, weak" = "Not str democrat",
+                              "Democrat, strong" = "Strong democrat")) %>%
+  count(partyid)
+```
+
+```{r}
+gss_cat %>%
+  mutate(partyid = fct_recode(partyid,
+                              "Republican, strong" = "Strong republican",
+                              "Republican, weak" = "Not str republican",
+                              "Independent, near rep" = "Ind,near rep",
+                              "Independent, near dem" = "Ind,near dem",
+                              "Democrat, weak" = "Not str democrat",
+                              "Democrat, strong" = "Strong democrat",
+                              "Other" = "No answer",
+                              "Other" = "Don't know",
+                              "Other" = "Other party")) %>%
+  count(partyid)
+```
+
+-   use **fct_collapse** for assigning a new name to multiple old names
+
+```{r}
+gss_cat %>%
+  mutate(partyid = fct_collapse(partyid,
+                                other = c("No answer", "Don't know", "Other party"),
+                                rep = c("Strong republican", "Not str republican"),
+                                ind = c("Ind,near rep", "Independent", "Ind,near dem"),
+                                dem = c("Not str democrat", "Strong democrat"))) %>%
+  count(partyid)
+```
+
+-   lumping together all small groups for a simpler plot using **fct_lump()**
+-   it defaults to lumping the smallest groups so the aggregate group is still the smallest group
+-   the n parameter can be used to specify how many groups you're looking for
+
+```{r}
+gss_cat %>%
+  mutate(relig = fct_lump(relig, n =10)) %>%
+  count(relig, sort = TRUE) %>%
+  print(n = Inf)
+```
+
+-   this took the 15 religion categories and lumped the bottom 5 into 'Other'
